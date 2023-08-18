@@ -1,10 +1,12 @@
 using api_dotnet7.Data;
 using api_dotnet7.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace api_dotnet7.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class UsersController : ControllerBase
@@ -15,6 +17,7 @@ namespace api_dotnet7.Controllers
             _context = context;
         }
 
+        [AllowAnonymous]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<AppUser>>> GetUsers()
         {
@@ -28,7 +31,12 @@ namespace api_dotnet7.Controllers
         {
             var user = await _context.Users.FindAsync(id);
 
-            return user;
+            if (user is not null)
+            {
+                return user;
+            }
+
+            return NotFound();
         }
     }
 }
