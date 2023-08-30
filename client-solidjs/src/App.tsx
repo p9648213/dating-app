@@ -1,36 +1,21 @@
 import { Router, Route, Routes } from "@solidjs/router";
-import { createResource } from "solid-js";
 import { Toaster } from "solid-toast";
-import { User, getUsers } from "./helpers/userApi";
+import NavigationBar from "./components/NavigationBar";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import Home from "./pages/Home";
 
 function App() {
-  const [users] = createResource<User[]>(getUsers);
-
-  function Data() {
-    return (
-      <div>
-        {users.loading && <div>Loading...</div>}
-        {users.error && <div>{users.error.message}</div>}
-        {!users.loading && !users.error && (
-          <div>
-            {users()?.map((user) => (
-              <div>{user.userName}</div>
-            ))}
-          </div>
-        )}
-      </div>
-    );
-  }
-
   return (
-    <>
-      <Router>
-        <Routes>
-          <Route path="/" element={<Data />} />
-        </Routes>
-      </Router>
-      <Toaster />
-    </>
+    <Router>
+      <NavigationBar />
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+      </Routes>
+      <Toaster position="bottom-right" />
+    </Router>
   );
 }
 

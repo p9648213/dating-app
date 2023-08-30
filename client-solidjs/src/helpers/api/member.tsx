@@ -1,20 +1,20 @@
 import { z } from "zod";
 
-const UserSchema = z.object({
+const MemberSchema = z.object({
   id: z.number(),
   userName: z.string(),
 });
 
-export type User = z.infer<typeof UserSchema>;
+export type Member = z.infer<typeof MemberSchema>;
 
-export async function getUsers(): Promise<User[]> {
+export async function getMembers(): Promise<Member[]> {
   const res = await fetch("https://localhost:5001/api/users");
 
   if (!res.ok) {
     throw new Error(res.status.toString());
   }
 
-  const resData = z.array(UserSchema).safeParse(await res.json());
+  const resData = z.array(MemberSchema).safeParse(await res.json());
 
   if (!resData.success) {
     throw new Error("Invalid User Data");

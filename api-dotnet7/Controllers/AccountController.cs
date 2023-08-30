@@ -1,9 +1,11 @@
+using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using api_dotnet7.Data;
 using api_dotnet7.DTOs;
 using api_dotnet7.Entities;
 using api_dotnet7.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,6 +17,13 @@ namespace api_dotnet7.Controllers
     {
         private readonly DataContext _context;
         private readonly ITokenService _tokenService;
+        private readonly CookieOptions cookieOptions = new()
+        {
+            HttpOnly = true,
+            SameSite = SameSiteMode.None,
+            IsEssential = true,
+            Secure = true
+        };
 
         public AccountController(DataContext context, ITokenService tokenService)
         {
@@ -42,10 +51,11 @@ namespace api_dotnet7.Controllers
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
+            CreateAndSendToken(user);
+
             return new UserDto
             {
                 UserName = user.UserName,
-                Token = _tokenService.CreateToken(user)
             };
         }
 
@@ -71,11 +81,40 @@ namespace api_dotnet7.Controllers
                 }
             }
 
+            CreateAndSendToken(user);
+
             return new UserDto
             {
                 UserName = user.UserName,
-                Token = _tokenService.CreateToken(user)
             };
+        }
+
+        [Authorize]
+        [HttpGet("info")]
+        public ActionResult<UserDto> GetAccountInfo()
+        {
+            var username = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
+
+            return new UserDto
+            {
+                UserName = username
+            };
+
+        }
+
+        [HttpGet("logout")]
+        public ActionResult Logout()
+        {
+            Response.Cookies.Delete("token", cookieOptions);
+
+            return NoContent();
+        }
+
+        private void CreateAndSendToken(AppUser user)
+        {
+            var jwtToken = _tokenService.CreateToken(user);
+
+            Response.Cookies.Append("token", jwtToken, cookieOptions);
         }
 
         private async Task<bool> UserExits(string username)
