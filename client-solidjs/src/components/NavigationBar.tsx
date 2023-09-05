@@ -33,19 +33,19 @@ function NavigationBar() {
         {user.userName && (
           <>
             <nav class="md:ml-auto md:mr-auto flex flex-wrap items-center justify-center">
-              <LinkButton href="/" active="text-rose-700">
+              <LinkButton href="/matches" active="text-rose-700">
                 Matches
               </LinkButton>
 
-              <LinkButton href="/" active="text-rose-700">
+              <LinkButton href="/list" active="text-rose-700">
                 List
               </LinkButton>
 
-              <LinkButton href="/" active="text-rose-700">
+              <LinkButton href="/message" active="text-rose-700">
                 Message
               </LinkButton>
 
-              <LinkButton href="/" active="text-rose-700">
+              <LinkButton href="/errors" active="text-rose-700">
                 Error
               </LinkButton>
             </nav>

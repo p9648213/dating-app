@@ -45,7 +45,7 @@ function UserBox(props: UserBoxProps) {
   });
 
   return (
-    <div class="relative" ref={userBoxRef}>
+    <div class="relative sm:py-3" ref={userBoxRef}>
       <div class="inline-flex items-center overflow-hidden rounded-md border bg-white">
         <div class="border-e px-4 py-2 text-sm/none text-gray-600 hover:bg-gray-50 hover:text-gray-700">
           Welcome {props.user.userName}
